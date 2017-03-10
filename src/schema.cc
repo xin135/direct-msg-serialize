@@ -189,7 +189,7 @@ static void DoReleaseField(dms_field* field) {
 
 int InitSchema(const char* xml_desc, dms_schema* schema) {
   try {
-    DMS_CHECK_RESULT(ReleaseSchema(schema));
+    //DMS_CHECK_RESULT(ReleaseSchema(schema));
 
     // read the config
     std::stringstream ss(xml_desc);

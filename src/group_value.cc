@@ -6,8 +6,9 @@ namespace dms {
 GroupValue::GroupValue(dms_group_field* group_field, ByteArray* buffer)
   : Value(buffer) {
   group_value_.base.base_field = &group_field->base;
+  void* ptr = this;
   memcpy_s(group_value_.base.sys_data, sizeof(group_value_.base.sys_data), 
-    this, sizeof(this));
+    &ptr, sizeof(this));
   value_ = &group_value_.base;
 }
 

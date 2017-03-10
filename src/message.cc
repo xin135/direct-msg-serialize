@@ -8,8 +8,8 @@ namespace dms {
 Message::Message(const dms_schema* schema, dms_message* msg)
   : message_(msg) {
   message_->schema = schema;
-  memcpy_s(msg->sys_data, sizeof(msg->sys_data),
-    this, sizeof(this));
+  void* ptr = this;
+  memcpy_s(msg->sys_data, sizeof(msg->sys_data), &ptr, sizeof(this));
 }
 
 Message::~Message() {

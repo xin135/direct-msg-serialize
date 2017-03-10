@@ -130,14 +130,13 @@ DMS_API int dms_message_reset(dms_message* msg);
 
 /// Decode the input buffer and populates the message with the content. The
 /// format of the content must adhere to the schema definition of the message.
-DMS_API int dms_message_decode(dms_message* msg, const void* buffer, int size, 
-  int options = 0);
+DMS_API int dms_message_decode(dms_message* msg, const void* buffer, int size);
 
 /// Encode the message and output the buffer of the encoded content. It's
 /// supposed to used the decode API to use the encoded buffer, just be sure
 /// the schema is the same when decoding.
 DMS_API int dms_message_encode(dms_message* msg, const void** o_buffer, 
-  int* o_size, int options = 0);
+  int* o_size);
 
 /// Sets the value for the specified field value object. The value type must
 /// be the same as the field type definition, otherwise the operation would

@@ -8,8 +8,9 @@ SequenceValue::SequenceValue(dms_seq_field* seq_field, ByteArray* buffer)
   , current_(0)
   , element_value_(NULL) {
   seq_value_.base.base_field = &seq_field->base;
+  void* ptr = this;
   memcpy_s(seq_value_.base.sys_data, sizeof(seq_value_.base.sys_data),
-    this, sizeof(this));
+    &ptr, sizeof(this));
   value_ = &seq_value_.base;
 }
 
@@ -26,12 +27,12 @@ int SequenceValue::Init() {
     seq_value_.base.base_field);
   element_value_ = DoCreateValue(seq_field->element_field, buffer_);
   DMS_CHECK_RESULT(element_value_->Init());
+  seq_value_.element_value = element_value_->value();
   return 0;
 }
 
 int SequenceValue::SetPosition(int position) {
   position_ = position;
-  current_ = 0;
   // read offset
   int offset = 0;
   DMS_CHECK_RESULT(buffer_->Read<int>(position_, &offset));
@@ -50,11 +51,14 @@ int SequenceValue::SetPosition(int position) {
     }
     if (size > 0) {
       DMS_CHECK_RESULT(element_value_->SetPosition(offset));
+      current_ = 0;
     } else {
       DMS_CHECK_RESULT(element_value_->Clear());
+      current_ = -1;
     }
   } else {
     DMS_CHECK_RESULT(element_value_->Clear());
+    current_ = -1;
   }
   return 0;
 }
@@ -62,7 +66,7 @@ int SequenceValue::SetPosition(int position) {
 int SequenceValue::Clear() {
   DMS_CHECK_RESULT(element_value_->Clear());
   position_ = -1;
-  current_ = 0;
+  current_ = -1;
   return 0;
 }
 
@@ -95,7 +99,7 @@ int SequenceValue::SetSize(int size) {
   }
   // calculate the new size
   int csize = size * element_value_->fixed_size();
-  bool with_capacity = capacity > csize + 2 * sizeof(int);
+  bool with_capacity = capacity > static_cast<int>(csize + 2 * sizeof(int));
   int required_size = with_capacity ? csize + 2 * sizeof(int) :
     csize + sizeof(int);
   uint8_t* old_target = target;
@@ -124,6 +128,8 @@ int SequenceValue::SetSize(int size) {
   if (NULL != old_target) {
     memset(old_target, 0, old_capacity);
   }
+  current_ = -1;
+  element_value_->Clear();
   return 0;
 }
 
@@ -135,9 +141,27 @@ int SequenceValue::GetSize(int* o_size) const {
 
 int SequenceValue::SetCurrent(int current) {
   DMS_CHECK_RETURN(position_ >= 0, DMS_INVALID);
+  // read offset
+  int offset = 0;
+  DMS_CHECK_RESULT(buffer_->Read<int>(position_, &offset));
+  DMS_CHECK_RETURN(offset > 0, DMS_INVALID);
+  if (current == current_) {
+    return 0;
+  }
+
+  uint8_t* target = buffer_->begin() + offset;
+  uint8_t byte0 = *target;
+  bool has_capacity = ((byte0 & 0x80) > 0);
   int size = 0;
-  DMS_CHECK_RESULT(DoReadSize(&size));
+  memcpy_s(&size, sizeof(int), target, sizeof(int));
+  offset += sizeof(int);
+  if (has_capacity) {
+    size = (size & 0x7FFFFFFF);
+    offset += sizeof(int);
+  }
   DMS_CHECK_RETURN(current < size, DMS_INVALID);
+  offset += current * element_value_->fixed_size();
+  DMS_CHECK_RESULT(element_value_->SetPosition(offset));
   current_ = current;
   return 0;
 }

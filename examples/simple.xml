@@ -1,0 +1,15 @@
+
+<schema id="100" name="simple">
+	<char name="field0" />
+	<short name="field1" />
+	<int name="field2" />
+	<int64 name="field3" />
+	<string name="field4" />
+	<group name="field5" >
+		<int name="group_f0" />
+		<int64 name="group_f1" />
+	</group>
+	<sequence name="field6" >
+		<int name="seq_elem" />
+	</sequence>
+</schema>

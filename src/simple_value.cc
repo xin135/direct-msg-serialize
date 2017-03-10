@@ -35,8 +35,9 @@ SimpleValue::SimpleValue(dms_field* field, ByteArray* buffer)
   : Value(buffer) {
   type_ = field->type;
   simple_value_.base_field = field;
-  memcpy_s(simple_value_.sys_data, sizeof(simple_value_.sys_data), this, 
-    sizeof(this));
+  void* ptr = this;
+  memcpy_s(simple_value_.sys_data, sizeof(simple_value_.sys_data), &ptr, 
+    sizeof(void*));
   value_ = &simple_value_;
   fixed_size_ = FixedSizeOfType(type_);
 }

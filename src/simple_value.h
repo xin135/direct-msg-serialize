@@ -129,7 +129,7 @@ inline int SimpleValue::SetString(const char* value, int size) {
     }
   }
   // calculate the new size
-  bool with_capacity = capacity > size + 2 * sizeof(int);
+  bool with_capacity = capacity > static_cast<int>(size + 2 * sizeof(int));
   int required_size = with_capacity ? size + 2 * sizeof(int) :
     size + sizeof(int);
   if (required_size > capacity) {

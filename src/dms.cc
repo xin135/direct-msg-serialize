@@ -51,23 +51,22 @@ int dms_message_reset(dms_message* dms_msg) {
   return msg->Reset();
 }
 
-int dms_message_decode(dms_message* dms_msg, const void* buffer, int size, 
-  int options) {
+int dms_message_decode(dms_message* dms_msg, const void* buffer, int size) {
   DMS_CHECK_RETURN(NULL != dms_msg && NULL != buffer && 0 != size,
     DMS_INVALID);
   dms::Message* msg = *reinterpret_cast<dms::Message**>(
     dms_msg->sys_data);
   DMS_CHECK_RETURN(NULL != msg, DMS_INVALID);
-  return msg->Decode(buffer, size, options);
+  return msg->Decode(buffer, size, 0);
 }
 
 int dms_message_encode(dms_message* dms_msg, const void** o_buffer,
-  int* o_size, int options) {
+  int* o_size) {
   DMS_CHECK_RETURN(NULL != dms_msg && NULL != o_buffer && NULL != o_size,
     DMS_INVALID);
   dms::Message* msg = *reinterpret_cast<dms::Message**>(dms_msg->sys_data);
   DMS_CHECK_RETURN(NULL != msg, DMS_INVALID);
-  return msg->Encode(o_buffer, o_size, options);
+  return msg->Encode(o_buffer, o_size, 0);
 }
 
 int dms_value_set_char(dms_value* fvalue, char value) {
