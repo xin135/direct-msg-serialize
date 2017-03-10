@@ -24,7 +24,7 @@ int main() {
   dms_message msg;
   memset(&msg, 0, sizeof(dms_message));
   dms_message_init(&schema, &msg);
-  // set field values of the message
+  // get fields of the message
   dms_value* field_0 = msg.group_value->children[0];
   dms_value* field_1 = msg.group_value->children[1];
   dms_value* field_2 = msg.group_value->children[2];

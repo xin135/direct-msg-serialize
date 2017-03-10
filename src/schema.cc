@@ -37,6 +37,10 @@ static int DoReadSimpleField(rapidxml::xml_node<char>* field_node,
     o_field->type = DMS_TYPE_INT;
   } else if (type == "int64" || type == "long") {
     o_field->type = DMS_TYPE_LONG;
+  } else if (type == "float") {
+    o_field->type = DMS_TYPE_FLOAT;
+  } else if (type == "double") {
+    o_field->type = DMS_TYPE_DOUBLE;
   } else if (type == "string") {
     o_field->type = DMS_TYPE_STRING;
   } else {
