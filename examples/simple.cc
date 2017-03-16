@@ -10,7 +10,7 @@ int main() {
   std::vector<char> content;
   std::ifstream in("simple.xml", std::ios::binary);
   in.seekg(0, std::ios::end);
-  size_t fsize = in.tellg();
+  size_t fsize = (size_t)in.tellg();
   content.resize(fsize);
   in.seekg(0, std::ios::beg);
   in.read(&content[0], fsize);

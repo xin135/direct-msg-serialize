@@ -13,19 +13,23 @@
 
 // Handle DSO symbol visibility
 #if defined _WIN32
-#if defined DMS_SDK_EXPORT
-#define DMS_API __declspec(dllexport)
+  #if defined DMS_STATIC
+    #define DMS_API
+  #else
+    #if defined DMS_SDK_EXPORT
+      #define DMS_API __declspec(dllexport)
+    #else
+      #define DMS_API __declspec(dllimport)
+    #endif
+  #endif
 #else
-#define DMS_API __declspec(dllimport)
-#endif
-#else
-#if defined __SUNPRO_C  || defined __SUNPRO_CC
-#define EQ_API __global
-#elif (defined __GNUC__ && __GNUC__ >= 4) || defined __INTEL_COMPILER
-#define EQ_API __attribute__ ((visibility("default")))
-#else
-#define EQ_API
-#endif
+  #if defined __SUNPRO_C  || defined __SUNPRO_CC
+    #define DMS_API __global
+  #elif (defined __GNUC__ && __GNUC__ >= 4) || defined __INTEL_COMPILER
+    #define DMS_API __attribute__ ((visibility("default")))
+  #else
+    #define DMS_API
+  #endif
 #endif
 
 /// Define the max field name length

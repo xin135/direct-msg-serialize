@@ -65,7 +65,7 @@ int main() {
   std::vector<char> content;
   std::ifstream in("test.xml", std::ios::binary);
   in.seekg(0, std::ios::end);
-  size_t fsize = in.tellg();
+  size_t fsize = (size_t)in.tellg();
   content.resize(fsize);
   in.seekg(0, std::ios::beg);
   in.read(&content[0], fsize);
@@ -232,7 +232,7 @@ int main() {
     dms_value_set_int(field_20, 4455);
     dms_value_set_int(field_21, 4455);
     dms_value_set_int(field_22, 4455);
-    dms_value_set_char(field_23, 8888);
+    dms_value_set_char(field_23, 'b');
     dms_value_set_short(field_24, 9990);
     dms_value_set_int(field_25, 88884);
     dms_value_set_float(field_26, 999.4f);
