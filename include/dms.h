@@ -1,5 +1,5 @@
 /**
- * Direct message serialize library.
+ * Direct message serialization library.
  *
  * Copyright (C) 2017 hainan, ning.  All rights reserved.
  *
@@ -10,6 +10,10 @@
 
 #ifndef DMS_API_H__
 #define DMS_API_H__
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 // Handle DSO symbol visibility
 #if defined _WIN32
@@ -187,5 +191,9 @@ DMS_API int dms_seq_value_set_current(dms_seq_value* seq_value,
 /// value.
 DMS_API int dms_seq_value_get_current(const dms_seq_value* seq_value,
   int* o_current_index);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // DMS_API_H__
