@@ -57,8 +57,8 @@ typedef enum _dms_type {
 /// any type, and if this is a compound type (group or sequence), the pointer
 /// to this field could be casted to corresponding concrete field type. 
 typedef struct _dms_field {
-  int               type;
-  char              name[DMS_FIELD_NAME_LEN];
+  int type;                       // the field type
+  char name[DMS_FIELD_NAME_LEN];  // the field name
 } dms_field;
 
 /// Represents a group field detinition of a message. A group field
@@ -66,25 +66,25 @@ typedef struct _dms_field {
 /// The order of the fields definitions is just the order of the fields 
 /// in the message buffer.
 typedef struct _dms_group_field {
-  dms_field         base;
-  dms_field**       children;
-  int               num_of_children;
+  dms_field base;                 // the field base
+  dms_field** children;           // the child fields of the group
+  int num_of_children;            // the child fields count
 } dms_group_field;
 
 /// Represents a sequence field definition of a message. A sequence field
 /// defines an array field with fixed element type. For instance, a sequence
 /// field with the INT element field means a INT array field. 
 typedef struct _dms_seq_field {
-  dms_field         base;
-  dms_field*        element_field;
+  dms_field base;                 // the field base
+  dms_field* element_field;       // the element field for the sequence
 } dms_seq_field;
 
 /// Represents a schema. A schema defines static struct of a message, it
 /// contains a sequence of fields definitions. The order of the fields
 /// definitions is just the order of the fields in the message buffer.
 typedef struct _dms_schema {
-  int               schema_id;
-  dms_group_field*  root_field;
+  int schema_id;                  // the id of the schema
+  dms_group_field* root_field;    // the root field for the schema
 } dms_schema;
 
 /// Represents generic value of a message field. The field could be
@@ -92,32 +92,32 @@ typedef struct _dms_schema {
 /// the pointer to this value could be casted to corresponding concrete 
 /// value type. 
 typedef struct _dms_value {
-  dms_field*        base_field;
-  char              sys_data[16];
+  dms_field* base_field;          // the field base for the value
+  char sys_data[16];              // the system reserved data
 } dms_value;
 
 /// Represents a group value of a message. It contains values of the child
 /// fields of the groups, and the order of the child values is just the
 /// order of the child fields.
 typedef struct _dms_group_value {
-  dms_value         base;
-  dms_value**       children;
+  dms_value base;                 // the base value for the group
+  dms_value** children;           // the child fields for the group
 } dms_group_value;
 
 /// Represents a sequence value of a message. The element value in it 
 /// represents the currently selected element in the array.
 typedef struct _dms_seq_value {
-  dms_value         base;
-  dms_value*        element_value;
+  dms_value base;                 // the base field for the sequence
+  dms_value* element_value;       // the element value for the sequence
 } dms_seq_value;
 
 /// Represents the message. A message is created based on a pre-defined
 /// schema. And the values of the message fields could be accessed through
 /// the group value in it.
 typedef struct _dms_message {
-  const dms_schema* schema;
-  dms_group_value*  group_value;
-  char              sys_data[16];
+  const dms_schema* schema;       // the schema
+  dms_group_value* group_value;   // the root group value for the message
+  char sys_data[16];              // the system reserved data
 } dms_message;
 
 /// Creates a schema based on the xml detinitions in the description
@@ -143,20 +143,24 @@ DMS_API int dms_message_decode(dms_message* msg, const void* buffer, int size);
 /// Encode the message and output the buffer of the encoded content. It's
 /// supposed to used the decode API to use the encoded buffer, just be sure
 /// the schema is the same when decoding.
-DMS_API int dms_message_encode(dms_message* msg, const void** o_buffer, 
-  int* o_size);
+DMS_API int dms_message_encode(dms_message* msg, 
+                               const void** o_buffer, 
+                               int* o_size);
 
-/// Sets the value for the specified field value object. The value type must
-/// be the same as the field type definition, otherwise the operation would
-/// fail.
+/// Sets the primitive value for the specified field value object. The value 
+/// type must be the same as the field type definition, otherwise the operation 
+/// would fail.
 DMS_API int dms_value_set_char(dms_value* fvalue, char value);
 DMS_API int dms_value_set_short(dms_value* fvalue, short value);
 DMS_API int dms_value_set_int(dms_value* fvalue, int value);
 DMS_API int dms_value_set_long(dms_value* fvalue, long long value);
 DMS_API int dms_value_set_float(dms_value* fvalue, float value);
 DMS_API int dms_value_set_double(dms_value* fvalue, double value);
+
+/// Sets the string value for the string field value object.
 DMS_API int dms_value_set_string(dms_value* fvalue,
-  const char* value, int size);
+                                 const char* value, 
+                                 int size);
 
 /// Gets the value from the specified field value object. The value type must
 /// be the same as the field type definition, otherwise the operation would
@@ -167,30 +171,34 @@ DMS_API int dms_value_get_int(const dms_value* fvalue, int* o_value);
 DMS_API int dms_value_get_long(const dms_value* fvalue, long long* o_value);
 DMS_API int dms_value_get_float(const dms_value* fvalue, float* o_value);
 DMS_API int dms_value_get_double(const dms_value* fvalue, double* o_value);
+
+/// Gets the string value for the string field value object.
 DMS_API int dms_value_get_string(const dms_value* fvalue, 
-  const char** o_value, int* o_size);
+                                 const char** o_value, 
+                                 int* o_size);
 
 /// Help method to get the child field value object of the input group value.
 DMS_API int dms_group_value_get_child(const dms_group_value* group_value,
-  const char* child_name, dms_value** o_child);
+                                      const char* child_name, 
+                                      dms_value** o_child);
 
 /// Sets the number of elements in the specified sequence value.
 DMS_API int dms_seq_value_set_size(dms_seq_value* seq_value,
-  int size);
+                                   int size);
  
 /// Gets the number of elements of the specified sequence value.
 DMS_API int dms_seq_value_get_size(const dms_seq_value* seq_value,
-  int* o_size);
+                                   int* o_size);
 
 /// Sets the index of the elements to be operated on for the input sequence
 /// value.
 DMS_API int dms_seq_value_set_current(dms_seq_value* seq_value,
-  int current_index);
+                                      int current_index);
 
 /// Gets the index of the elements currelty operating on for the input sequence
 /// value.
 DMS_API int dms_seq_value_get_current(const dms_seq_value* seq_value,
-  int* o_current_index);
+                                      int* o_current_index);
 
 #ifdef __cplusplus
 }
